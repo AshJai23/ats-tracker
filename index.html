@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ATS Resume Review — Hiring Manager Edition</title>
+<title>AJ.ai — Resume Diagnosis, Keywords &amp; AI Rewrite</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,10 +11,10 @@
 <header class="site-header">
   <div class="wrap">
     <div class="brand">
-      <span class="brand-mark">HM</span>
+      <span class="brand-mark">AJ</span>
       <div>
-        <h1>ATS &amp; Hiring Manager Review</h1>
-        <p class="tagline">Score your resume the way a 20-year hiring manager and the ATS software both would.</p>
+        <h1>AJ<span class="dot">.ai</span></h1>
+        <p class="tagline">Diagnose, find keywords, rewrite in XYZ format, and get a perfect CV — like a 20-year hiring manager would.</p>
       </div>
     </div>
   </div>
@@ -22,58 +22,84 @@
 
 <main class="wrap">
 
-  <section class="input-grid" id="inputSection">
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Resume / CV</h2>
-        <label class="file-btn">
-          Upload .pdf / .docx / .txt
-          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" hidden>
-        </label>
+  <ol class="step-nav" id="stepNav">
+    <li data-step="1" class="active"><span class="step-num">1</span>Diagnose</li>
+    <li data-step="2"><span class="step-num">2</span>Keywords</li>
+    <li data-step="3"><span class="step-num">3</span>Rewrite (XYZ)</li>
+    <li data-step="4"><span class="step-num">4</span>Perfect CV</li>
+  </ol>
+
+  <!-- STEP 1: DIAGNOSE -->
+  <section class="step-panel active" data-step-panel="1">
+    <div class="input-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Resume / CV</h2>
+          <label class="file-btn">
+            Upload .pdf / .docx / .txt
+            <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" hidden>
+          </label>
+        </div>
+        <textarea id="resumeText" placeholder="Paste your resume text here, or upload a file above..."></textarea>
+        <div class="meta-row"><span id="resumeWordCount">0 words</span><span id="resumeFileStatus"></span></div>
       </div>
-      <textarea id="resumeText" placeholder="Paste your resume text here, or upload a file above..."></textarea>
-      <div class="meta-row"><span id="resumeWordCount">0 words</span><span id="resumeFileStatus"></span></div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Target Job Description</h2>
+          <label class="file-btn">
+            Upload .pdf / .docx / .txt
+            <input type="file" id="jdFile" accept=".pdf,.docx,.txt" hidden>
+          </label>
+        </div>
+        <textarea id="jdText" placeholder="Paste the job posting / job description here, or upload a file above..."></textarea>
+        <div class="meta-row"><span id="jdWordCount">0 words</span><span id="jdFileStatus"></span></div>
+      </div>
     </div>
 
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Target Job Description</h2>
-        <label class="file-btn">
-          Upload .pdf / .docx / .txt
-          <input type="file" id="jdFile" accept=".pdf,.docx,.txt" hidden>
-        </label>
+    <div class="analyze-row">
+      <button id="analyzeBtn">Step 1: Diagnose My Resume</button>
+      <span id="analyzeError" class="error-text"></span>
+    </div>
+
+    <div id="diagnoseResults" class="results hidden">
+      <div class="score-panel">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 140 140" class="score-ring">
+            <circle cx="70" cy="70" r="60" class="ring-bg"/>
+            <circle cx="70" cy="70" r="60" class="ring-fg" id="ringFg"/>
+          </svg>
+          <div class="score-num">
+            <span id="scoreValue">0</span>
+            <small>/ 100</small>
+          </div>
+        </div>
+        <div class="verdict-block">
+          <span class="verdict-tag" id="verdictTag">—</span>
+          <p id="verdictText"></p>
+        </div>
       </div>
-      <textarea id="jdText" placeholder="Paste the job posting / job description here, or upload a file above..."></textarea>
-      <div class="meta-row"><span id="jdWordCount">0 words</span><span id="jdFileStatus"></span></div>
+
+      <div class="breakdown-grid" id="breakdownGrid"></div>
+
+      <div class="card">
+        <h3>ATS Formatting Check</h3>
+        <ul id="formatChecklist" class="checklist"></ul>
+      </div>
+
+      <div class="card note-card">
+        <h3>Hiring Manager's Notes</h3>
+        <div id="hmNotes" class="hm-notes"></div>
+      </div>
+
+      <div class="step-actions">
+        <button class="next-btn" data-goto="2">Next: Step 2 — Keywords →</button>
+      </div>
     </div>
   </section>
 
-  <div class="analyze-row">
-    <button id="analyzeBtn">Review My Resume</button>
-    <span id="analyzeError" class="error-text"></span>
-  </div>
-
-  <section id="results" class="results hidden">
-
-    <div class="score-panel">
-      <div class="score-ring-wrap">
-        <svg viewBox="0 0 140 140" class="score-ring">
-          <circle cx="70" cy="70" r="60" class="ring-bg"/>
-          <circle cx="70" cy="70" r="60" class="ring-fg" id="ringFg"/>
-        </svg>
-        <div class="score-num">
-          <span id="scoreValue">0</span>
-          <small>/ 100</small>
-        </div>
-      </div>
-      <div class="verdict-block">
-        <span class="verdict-tag" id="verdictTag">—</span>
-        <p id="verdictText"></p>
-      </div>
-    </div>
-
-    <div class="breakdown-grid" id="breakdownGrid"></div>
-
+  <!-- STEP 2: KEYWORDS -->
+  <section class="step-panel" data-step-panel="2">
     <div class="two-col">
       <div class="card">
         <h3>Keyword Match</h3>
@@ -107,26 +133,68 @@
     </div>
 
     <div class="card">
-      <h3>ATS Formatting Check</h3>
-      <ul id="formatChecklist" class="checklist"></ul>
-    </div>
-
-    <div class="card note-card">
-      <h3>Hiring Manager's Notes</h3>
-      <div id="hmNotes" class="hm-notes"></div>
-    </div>
-
-    <div class="card">
       <h3>Top Fixes, In Priority Order</h3>
       <ol id="fixList" class="fix-list"></ol>
     </div>
 
+    <div class="step-actions">
+      <button class="back-btn" data-goto="1">← Back</button>
+      <button class="next-btn" data-goto="3">Next: Step 3 — Rewrite in XYZ Format →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: REWRITE -->
+  <section class="step-panel" data-step-panel="3">
+    <div class="card note-card">
+      <h3>Google's XYZ Formula</h3>
+      <p class="card-sub">"Accomplished [X] as measured by [Y], by doing [Z]." AJ.ai's AI rewrites your weakest bullets into this structure &mdash; using only facts already in your resume, never inventing numbers.</p>
+    </div>
+
+    <div class="analyze-row">
+      <button id="rewriteBtn">Generate AI Rewrite</button>
+      <span id="rewriteError" class="error-text"></span>
+      <span id="rewriteLoading" class="loading-text hidden">Asking AJ.ai to rewrite your bullets…</span>
+    </div>
+
+    <div id="rewriteResults" class="results hidden">
+      <div class="card">
+        <h3>Rewritten Bullets</h3>
+        <div id="bulletList" class="bullet-list"></div>
+      </div>
+      <div class="step-actions">
+        <button class="back-btn" data-goto="2">← Back</button>
+        <button class="next-btn" data-goto="4">Next: Step 4 — Perfect CV →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4: PERFECT CV -->
+  <section class="step-panel" data-step-panel="4">
+    <div class="card">
+      <div class="panel-head">
+        <h3>Your Rewritten Resume</h3>
+        <button class="copy-btn" data-copy-target="finalResumeOut">Copy</button>
+      </div>
+      <textarea id="finalResumeOut" class="output-box" readonly></textarea>
+    </div>
+
+    <div class="card">
+      <div class="panel-head">
+        <h3>Reusable XYZ Template</h3>
+        <button class="copy-btn" data-copy-target="templateOut">Copy</button>
+      </div>
+      <textarea id="templateOut" class="output-box" readonly></textarea>
+    </div>
+
+    <div class="step-actions">
+      <button class="back-btn" data-goto="3">← Back</button>
+    </div>
   </section>
 
 </main>
 
 <footer class="site-footer">
-  <div class="wrap">Runs entirely in your browser. Nothing is uploaded anywhere.</div>
+  <div class="wrap">Steps 1-2 run entirely in your browser. Step 3-4 send your resume and job description to AJ.ai's server to generate AI rewrites.</div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>

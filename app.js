@@ -13,7 +13,7 @@ const resumeFileStatusEl = document.getElementById("resumeFileStatus");
 const jdFileStatusEl = document.getElementById("jdFileStatus");
 const analyzeBtn = document.getElementById("analyzeBtn");
 const analyzeErrorEl = document.getElementById("analyzeError");
-const resultsEl = document.getElementById("results");
+const resultsEl = document.getElementById("diagnoseResults");
 
 function wordCount(text) {
   return (text.trim().match(/\S+/g) || []).length;
@@ -521,6 +521,127 @@ function analyze() {
   const score = computeScore({ keywordMatch, skillMatch, quant, verbs, formatChecks });
 
   render({ keywordMatch, skillMatch, quant, verbs, formatChecks, score });
+  unlockStep(2);
 }
 
 analyzeBtn.addEventListener("click", analyze);
+
+// ---------- wizard navigation ----------
+
+const WORKER_URL = "https://aj-ai-resume-worker.ashlinjaishal23.workers.dev";
+
+let furthestUnlocked = 1;
+
+function unlockStep(n) {
+  if (n > furthestUnlocked) furthestUnlocked = n;
+}
+
+function goToStep(n) {
+  document.querySelectorAll(".step-panel").forEach((el) => {
+    el.classList.toggle("active", Number(el.dataset.stepPanel) === n);
+  });
+  document.querySelectorAll("#stepNav li").forEach((li) => {
+    const s = Number(li.dataset.step);
+    li.classList.toggle("active", s === n);
+    li.classList.toggle("done", s < n);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll("[data-goto]").forEach((btn) => {
+  btn.addEventListener("click", () => goToStep(Number(btn.dataset.goto)));
+});
+
+document.querySelectorAll("#stepNav li").forEach((li) => {
+  li.addEventListener("click", () => {
+    const s = Number(li.dataset.step);
+    if (s <= furthestUnlocked) goToStep(s);
+  });
+});
+
+// ---------- step 3: AI rewrite ----------
+
+const rewriteBtn = document.getElementById("rewriteBtn");
+const rewriteErrorEl = document.getElementById("rewriteError");
+const rewriteLoadingEl = document.getElementById("rewriteLoading");
+const rewriteResultsEl = document.getElementById("rewriteResults");
+const bulletListEl = document.getElementById("bulletList");
+
+let lastRewrite = null;
+
+async function requestRewrite() {
+  rewriteErrorEl.textContent = "";
+  const resumeText = resumeTextEl.value.trim();
+  const jdText = jdTextEl.value.trim();
+
+  if (!resumeText || !jdText) {
+    rewriteErrorEl.textContent = "Go back to Step 1 and add both a resume and a job description first.";
+    return;
+  }
+
+  rewriteBtn.disabled = true;
+  rewriteLoadingEl.classList.remove("hidden");
+  rewriteResultsEl.classList.add("hidden");
+
+  try {
+    const resp = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ resumeText, jdText }),
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      rewriteErrorEl.textContent = data.error === "Claude API error"
+        ? "AJ.ai's AI backend couldn't complete this request (likely a billing/API key issue on the server side)."
+        : data.error || "Something went wrong generating the rewrite.";
+      return;
+    }
+
+    lastRewrite = data;
+    renderRewrite(data);
+    unlockStep(4);
+  } catch (err) {
+    rewriteErrorEl.textContent = "Couldn't reach AJ.ai's server. Check your connection and try again.";
+  } finally {
+    rewriteBtn.disabled = false;
+    rewriteLoadingEl.classList.add("hidden");
+  }
+}
+
+function renderRewrite(data) {
+  bulletListEl.innerHTML = "";
+  data.rewrittenBullets.forEach((b) => {
+    const div = document.createElement("div");
+    div.className = "bullet-item";
+    div.innerHTML = `
+      <p class="original">${b.original}</p>
+      <p class="rewritten">${b.rewritten}</p>
+      ${b.note ? `<p class="note">${b.note}</p>` : ""}
+    `;
+    bulletListEl.appendChild(div);
+  });
+
+  document.getElementById("finalResumeOut").value = data.finalResume || "";
+  document.getElementById("templateOut").value = data.template || "";
+
+  rewriteResultsEl.classList.remove("hidden");
+}
+
+rewriteBtn.addEventListener("click", requestRewrite);
+
+// ---------- step 4: copy buttons ----------
+
+document.querySelectorAll(".copy-btn").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const target = document.getElementById(btn.dataset.copyTarget);
+    try {
+      await navigator.clipboard.writeText(target.value);
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => (btn.textContent = original), 1500);
+    } catch {
+      target.select();
+    }
+  });
+});
