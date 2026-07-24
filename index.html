@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATS Resume Review — Hiring Manager Edition</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <span class="brand-mark">HM</span>
+      <div>
+        <h1>ATS &amp; Hiring Manager Review</h1>
+        <p class="tagline">Score your resume the way a 20-year hiring manager and the ATS software both would.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="input-grid" id="inputSection">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Resume / CV</h2>
+        <label class="file-btn">
+          Upload .pdf / .docx / .txt
+          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" hidden>
+        </label>
+      </div>
+      <textarea id="resumeText" placeholder="Paste your resume text here, or upload a file above..."></textarea>
+      <div class="meta-row"><span id="resumeWordCount">0 words</span><span id="resumeFileStatus"></span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Target Job Description</h2>
+        <label class="file-btn">
+          Upload .pdf / .docx / .txt
+          <input type="file" id="jdFile" accept=".pdf,.docx,.txt" hidden>
+        </label>
+      </div>
+      <textarea id="jdText" placeholder="Paste the job posting / job description here, or upload a file above..."></textarea>
+      <div class="meta-row"><span id="jdWordCount">0 words</span><span id="jdFileStatus"></span></div>
+    </div>
+  </section>
+
+  <div class="analyze-row">
+    <button id="analyzeBtn">Review My Resume</button>
+    <span id="analyzeError" class="error-text"></span>
+  </div>
+
+  <section id="results" class="results hidden">
+
+    <div class="score-panel">
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 140 140" class="score-ring">
+          <circle cx="70" cy="70" r="60" class="ring-bg"/>
+          <circle cx="70" cy="70" r="60" class="ring-fg" id="ringFg"/>
+        </svg>
+        <div class="score-num">
+          <span id="scoreValue">0</span>
+          <small>/ 100</small>
+        </div>
+      </div>
+      <div class="verdict-block">
+        <span class="verdict-tag" id="verdictTag">—</span>
+        <p id="verdictText"></p>
+      </div>
+    </div>
+
+    <div class="breakdown-grid" id="breakdownGrid"></div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>Keyword Match</h3>
+        <p class="card-sub">Terms pulled from the job description, checked against your resume.</p>
+        <div class="chip-block">
+          <h4>Matched <span id="kwMatchedCount"></span></h4>
+          <div id="kwMatched" class="chip-row"></div>
+        </div>
+        <div class="chip-block">
+          <h4>Missing <span id="kwMissingCount"></span></h4>
+          <div id="kwMissing" class="chip-row"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Hard Skills</h3>
+        <p class="card-sub">Recognized tools, technologies, and skills.</p>
+        <div class="chip-block">
+          <h4>On resume &amp; in JD</h4>
+          <div id="skillMatched" class="chip-row"></div>
+        </div>
+        <div class="chip-block">
+          <h4>In JD, missing from resume</h4>
+          <div id="skillMissing" class="chip-row"></div>
+        </div>
+        <div class="chip-block">
+          <h4>On resume, not asked for</h4>
+          <div id="skillBonus" class="chip-row"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ATS Formatting Check</h3>
+      <ul id="formatChecklist" class="checklist"></ul>
+    </div>
+
+    <div class="card note-card">
+      <h3>Hiring Manager's Notes</h3>
+      <div id="hmNotes" class="hm-notes"></div>
+    </div>
+
+    <div class="card">
+      <h3>Top Fixes, In Priority Order</h3>
+      <ol id="fixList" class="fix-list"></ol>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Runs entirely in your browser. Nothing is uploaded anywhere.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="skills.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
